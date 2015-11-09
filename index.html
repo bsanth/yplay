@@ -1,0 +1,132 @@
+<html>
+
+<head>
+
+<style>
+
+#main
+{
+	width:40%;
+	position:absolute;
+	top:5%;
+	left:30%;
+}
+
+#url
+{
+	width:100%;
+	font-size:22pt;
+}
+
+#list
+{
+	width:100%;
+	position:relative;
+	font-size:16pt;
+	border:1px solid #000000;
+	padding:10px;
+}
+
+</style>
+<script src="http://www.youtube.com/player_api"></script>
+<script>
+var index = 0, current = 0;
+var songs = new Array();
+
+// create youtube player
+var player;
+
+// autoplay video
+function onPlayerReady(event) {
+	event.target.playVideo();
+}
+
+// when video ends
+function onPlayerStateChange(event) {        
+	if(event.data == 0) {            
+		document.getElementById(''+current).style.border = '0px solid green';
+		
+		if(current+1 < index)
+		{
+			current += 1
+			player.loadVideoById(songs[current]);
+		}
+		document.getElementById(''+current).style.border = '1px solid green';
+	}
+}
+
+function fetch()
+{
+	document.getElementById("list").innerHTML += "<div id='"+index+"'>"+ index + " <a href='"+document.getElementById("url").value+"'>"+document.getElementById("url").value+"</a><br />";
+	var vSplit = document.getElementById("url").value.split("v=");
+	var secondSplit = vSplit[1].split("&");
+	songs[index] = secondSplit[0];
+	index += 1;
+}
+
+function play()
+{
+	player = new YT.Player('player', {
+	  height: '390',
+	  width: '640',
+	  videoId: songs[current],
+	  events: {
+		'onReady': onPlayerReady,
+		'onStateChange': onPlayerStateChange
+	  }
+	});
+	document.getElementById(''+current).style.border = '1px solid green';
+}
+
+function next()
+{
+	document.getElementById(''+current).style.border = '0px solid green';
+	
+	if(current+1 < index)
+	{
+		current += 1
+		player.loadVideoById(songs[current]);
+	}
+	document.getElementById(''+current).style.border = '1px solid green';
+	
+}
+
+function prev()
+{
+	document.getElementById(''+current).style.border = '0px solid green';
+	
+	if(current-1 >= 0)
+	{
+		current -= 1
+		player.loadVideoById(songs[current]);
+	}
+	document.getElementById(''+current).style.border = '1px solid green';
+}
+
+</script>
+
+</head>
+
+<body>
+
+<div id="main">
+
+<center><h2>Quick Temporary Youtube Playlist Maker</h2></center>
+
+Copy Youtube URL and Hit Enter...<br />
+<form onsubmit="fetch();return false;">
+<input type="text" id="url"></input><br />
+</form>
+<div id="player"></div><br /><br />
+
+<div id="list"></div><br />
+
+<input type="button" onclick="play()" value="Play"></input>
+<input type="button" onclick="next()" value="Next"></input>
+<input type="button" onclick="prev()" value="Prev"></input>
+
+</div>
+
+</body>
+
+</html>
